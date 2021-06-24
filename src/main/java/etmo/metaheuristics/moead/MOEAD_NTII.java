@@ -66,6 +66,7 @@ public class MOEAD_NTII extends Algorithm {
 
     Operator crossover_;
     Operator mutation_;
+    Operator selection;
 
     String dataDirectory_;
 
@@ -106,7 +107,7 @@ public class MOEAD_NTII extends Algorithm {
 
         crossover_ = operators_.get("crossover"); // default: DE crossover
         mutation_ = operators_.get("mutation"); // default: polynomial mutation
-
+        selection = operators_.get("selection");
 
         //        多任务的个体
         population_ = new SolutionSet[taskNum];
@@ -159,6 +160,32 @@ public class MOEAD_NTII extends Algorithm {
                     } else {
                         neiborType = 2; // whole population
                     }
+
+//                    多种方式生成迁移解
+//                    随机选择另一个任务编号
+//                    int task2 = taskId;
+//                    while (task2 == taskId){
+//                        PseudoRandom.randInt(0, taskNum - 1);
+//                    }
+
+//                    int doTask = chooseTack(taskId);
+//                    if (doTask == taskId){
+//
+//                    }
+//
+//                    Solution[] parents = new Solution[2];
+
+
+
+
+
+
+
+
+
+
+
+
                     Vector<Integer> p = new Vector<Integer>();
                     matingSelection(p, n, 2, neiborType, taskId);
 

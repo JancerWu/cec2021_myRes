@@ -4,11 +4,13 @@ import etmo.core.*;
 import etmo.metaheuristics.utils.printIGD;
 import etmo.operators.crossover.CrossoverFactory;
 import etmo.operators.mutation.MutationFactory;
+import etmo.operators.selection.SelectionFactory;
 import etmo.problems.benchmarks_CEC2017.*;
 import etmo.problems.benchmarks_ETMO.*;
 import etmo.qualityIndicator.QualityIndicator;
 import etmo.util.JMException;
 import etmo.util.Ranking;
+import etmo.util.comparators.LocationComparator;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -21,16 +23,17 @@ public class MOEAD_NTII_main {
         Algorithm algorithm; // The algorithm to use
         Operator crossover; // Crossover operator
         Operator mutation; // Mutation operator
+        Operator selection;
 
         HashMap parameters; // Operator parameters
 
         double[] CR = new double[15];
-        for (int i = 3; i <= 10; i++){
-            CR[i] = (double)i / 10.0;
+        for (int i = 1; i <= 10; i++){
+            CR[i] = 0;
         }
 
-        for (int crI = 3; crI <= 10; crI++){
-            System.out.println("CR = " + CR[crI]);
+        for (int crI = 1; crI <= 1; crI++){
+            System.out.println("rmp = " + CR[crI]);
             for (int pCase = 1; pCase <= 9; pCase++ ){
                 switch (pCase){
 //                case 1:
@@ -189,11 +192,11 @@ public class MOEAD_NTII_main {
                 algorithm.setInputParameter("T", 10);
                 algorithm.setInputParameter("delta", 0.3);
                 algorithm.setInputParameter("nr", 2);
-                algorithm.setInputParameter("rmp", 0.02);
+                algorithm.setInputParameter("rmp", CR[crI]);
 
 
                 parameters = new HashMap();
-                parameters.put("CR", CR[crI]);
+                parameters.put("CR", 0.8);
                 parameters.put("F", 0.5);
                 crossover = CrossoverFactory.getCrossoverOperator("DifferentialEvolutionCrossover",parameters);
 
@@ -203,9 +206,15 @@ public class MOEAD_NTII_main {
                 parameters.put("distributionIndex", 20.0);
                 mutation = MutationFactory.getMutationOperator("PolynomialMutation", parameters);
 
+                parameters = new HashMap() ;
+                parameters.put("comparator", new LocationComparator()) ;
+                selection = SelectionFactory.getSelectionOperator("BinaryTournament",
+                        parameters);
+
 
                 algorithm.addOperator("crossover", crossover);
                 algorithm.addOperator("mutation", mutation);
+                algorithm.addOperator("selection", selection);
 
 
 
@@ -256,9 +265,9 @@ public class MOEAD_NTII_main {
 
 
 
-
-                String path = "cr=" + CR[crI] + "rmp=0.02";
-                printIGD.printIGDtoText(path, cpIGD, taskNumber, times);
+//
+//                String path = "rmp=" + CR[crI] + "CR=0.8";
+//                printIGD.printIGDtoText(path, cpIGD, taskNumber, times);
 
 
 //            String path = "";
