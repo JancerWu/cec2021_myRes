@@ -1,4 +1,4 @@
-package etmo.metaheuristics.moead;
+package etmo.metaheuristics.preserve.c706;
 
 import etmo.core.*;
 import etmo.metaheuristics.utils.printIGD;
@@ -38,10 +38,10 @@ public class MOEAD_NTII_main {
 
         for (int crI = 3; crI <= 3; crI++){
             for (int idN = 4; idN <= 4; idN++){
-//                System.out.println("rmp = " + CR[crI] + " id = " + id[idN]);
-                System.out.println("rmp = " + CR[crI] );
+                System.out.println("rmp = " + CR[crI] + " id = " + id[idN]);
+//                System.out.println("rmp = " + CR[crI] );
 
-                for (int pCase = 1; pCase <= 1; pCase++ ){
+                for (int pCase = 1; pCase <= 9; pCase++ ){
                     switch (pCase){
 //                case 1:
 //                    problemSet = CPLX1.getProblem();
@@ -75,7 +75,7 @@ public class MOEAD_NTII_main {
 //                    break;
 
                         case 1:
-                            problemSet = New4.getProblem();
+                            problemSet = CIHS.getProblem();
                             break;
                         case 2:
                             problemSet = CIMS.getProblem();
@@ -280,13 +280,13 @@ public class MOEAD_NTII_main {
                         System.out.println(form.format(ave[i] / times));
                     }
 //
-////                    String path = "origin id = " + id[idN] + " rmp = " + CR[crI] +  ".txt";
-//                    String path =  "origin random mix rmp = " + CR[crI] +  ".txt";
-//                    printIGD.printIGDtoText(path, cpIGD, taskNumber, times);
-//
-//                    String pathIgd =  "origin random mix for random mix rmp = " + CR[crI] +  ".txt";
-////                    String pathIgd = "origin igd for id = " + id[idN] +  " rmp = " + CR[crI] +  ".txt";
-//                    printIGD.printIGDtoText(pathIgd, testIgd, taskNumber, 50);
+//                    String path = "origin id = " + id[idN] + " rmp = " + CR[crI] +  ".txt";
+                    String path =  "origin random mix rmp = " + CR[crI] +  ".txt";
+                    printIGD.printIGDtoText(path, cpIGD, taskNumber, times);
+
+                    String pathIgd =  "origin random mix for random mix rmp = " + CR[crI] +  ".txt";
+//                    String pathIgd = "origin igd for id = " + id[idN] +  " rmp = " + CR[crI] +  ".txt";
+                    printIGD.printIGDtoText(pathIgd, testIgd, taskNumber, 50);
 
 
 

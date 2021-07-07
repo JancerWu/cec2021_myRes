@@ -25,6 +25,7 @@ import etmo.core.Solution;
 import etmo.core.SolutionSet;
 import etmo.qualityIndicator.Hypervolume;
 import etmo.util.NonDominatedSolutionList;
+import org.bytedeco.libfreenect._freenect_device;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -327,6 +328,41 @@ public class MetricsUtil {
 		}
 		return null;
 	} // readNonDominatedSolutionSet
+
+	public double[][] readNonDominatedSolutionSet2(String path) {
+		ArrayList<double[]> pfList = new ArrayList<>();
+  		try {
+			/* Open the file */
+			FileInputStream fis = new FileInputStream(path);
+			InputStreamReader isr = new InputStreamReader(fis);
+			BufferedReader br = new BufferedReader(isr);
+
+
+			String aux = br.readLine();
+			while (aux != null) {
+				StringTokenizer st = new StringTokenizer(aux);
+				int i = 0;
+				double[] igd = new double[st.countTokens()];
+				Solution solution = new Solution(st.countTokens());
+				while (st.hasMoreTokens()) {
+					double value = new Double(st.nextToken());
+					igd[i] = value;
+					i++;
+				}
+				pfList.add(igd);
+				aux = br.readLine();
+			}
+			br.close();
+			double[][] a = new double[pfList.size()][pfList.get(0).length];
+			return pfList.toArray(a);
+		} catch (Exception e) {
+			System.out.println("jmetal.qualityIndicator.util.readNonDominatedSolutionSet: " + path);
+			e.printStackTrace();
+		}
+		return null;
+	} // readNonDominatedSolutionSet
+
+
 
 	/**
 	 * Reads a set of non dominated solutions from a file and store it in a

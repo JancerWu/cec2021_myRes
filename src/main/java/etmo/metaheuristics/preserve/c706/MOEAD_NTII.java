@@ -1,4 +1,4 @@
-package etmo.metaheuristics.moead;
+package etmo.metaheuristics.preserve.c706;
 
 import etmo.core.*;
 import etmo.operators.crossover.CrossoverFactory;
@@ -6,7 +6,6 @@ import etmo.qualityIndicator.QualityIndicator;
 import etmo.util.JMException;
 import etmo.util.PseudoRandom;
 import jmetal.metaheuristics.moead.Utils;
-import no.uib.cipr.matrix.sparse.IR;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -163,8 +162,8 @@ public class MOEAD_NTII extends Algorithm {
             // STEP 1.2. Initialize population
             initPopulation(i);
 
-//            QualityIndicator indicator = new QualityIndicator(problemSet_, pf[i]);
-//            testIgd[i][cntIgd] +=  indicator.getIGD2(population_[i], i);
+            QualityIndicator indicator = new QualityIndicator(problemSet_, pf[i]);
+            testIgd[i][cntIgd] +=  indicator.getIGD2(population_[i], i);
 
             // STEP 1.3. Initialize z_
             initIdealPoint(i);
@@ -229,7 +228,7 @@ public class MOEAD_NTII extends Algorithm {
 
 
                 }
-                else {
+                else{
 //                    double sum = 0.0;
 //                    for (int ii = 0; ii < 5; ii++){
 //                        sum += crossIR[doTask][ii];
@@ -310,12 +309,13 @@ public class MOEAD_NTII extends Algorithm {
             }
             if (generation % 50 == 0){
                 for (int igd = 0 ; igd < taskNum; igd++){
-//                    QualityIndicator indicator = new QualityIndicator(problemSet_, pf[igd]);
-//                    testIgd[igd][cntIgd] +=  indicator.getIGD2(population_[igd], igd);
+                    QualityIndicator indicator = new QualityIndicator(problemSet_, pf[igd]);
+                    testIgd[igd][cntIgd] +=  indicator.getIGD2(population_[igd], igd);
                     initParameter(igd);
                 }
                 cntIgd++;
             }
+
         } while ( evaluations_ < maxEvaluations);
 
         return population_;

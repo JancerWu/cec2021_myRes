@@ -1,12 +1,10 @@
-package etmo.metaheuristics.moead;
+package etmo.metaheuristics.preserve.mixDRA_AB_TIR;
 
 import etmo.core.*;
 import etmo.operators.crossover.CrossoverFactory;
-import etmo.qualityIndicator.QualityIndicator;
 import etmo.util.JMException;
 import etmo.util.PseudoRandom;
 import jmetal.metaheuristics.moead.Utils;
-import no.uib.cipr.matrix.sparse.IR;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -72,14 +70,6 @@ public class MOEAD_NTII extends Algorithm {
 
     String dataDirectory_;
 
-    double[][] crossIR;
-
-
-    String[] pf;
-    int cntIgd;
-
-
-
 
 
 
@@ -99,20 +89,9 @@ public class MOEAD_NTII extends Algorithm {
     }
 
 
-    public SolutionSet[] execute2(double[][] testIgd) throws JMException, ClassNotFoundException {
-
-        taskNum = problemSet_.size();
-
-        pf = new String[taskNum];
-        for (int i = 0; i < pf.length; i++){
-            pf[i] = "PF/cec2017/" + problemSet_.get(i).getHType() + ".pf";
-        }
-
-        cntIgd = 0;
-
-
+    public SolutionSet[] execute2() throws JMException, ClassNotFoundException {
         int maxEvaluations;
-
+        taskNum = problemSet_.size();
 
         rate = 30;
 
@@ -139,9 +118,6 @@ public class MOEAD_NTII extends Algorithm {
         generation = 0;
         Collection collection;
         savedValues = new ArrayList[taskNum];
-        crossIR = new double[taskNum][];
-
-
 
 
         for (int i = 0; i < taskNum; i++){
@@ -150,9 +126,6 @@ public class MOEAD_NTII extends Algorithm {
             z_[i] = new double[problemSet_.get(i).getNumberOfObjectives()];
             lambda_[i] = new double[populationSize_][problemSet_.get(i).getNumberOfObjectives()];
             savedValues[i] = new ArrayList<>(populationSize_);
-            crossIR[i] = new double[5];
-
-            initParameter(i);
 
             initUniformWeight(i);
             // for (int i = 0; i < 300; i++)
@@ -163,14 +136,9 @@ public class MOEAD_NTII extends Algorithm {
             // STEP 1.2. Initialize population
             initPopulation(i);
 
-//            QualityIndicator indicator = new QualityIndicator(problemSet_, pf[i]);
-//            testIgd[i][cntIgd] +=  indicator.getIGD2(population_[i], i);
-
             // STEP 1.3. Initialize z_
             initIdealPoint(i);
         }
-        cntIgd++;
-
 
 
         do {
@@ -197,7 +165,6 @@ public class MOEAD_NTII extends Algorithm {
 
                 int doTask = chooseTack(taskId);
                 if (doTask == taskId){
-
                     Vector<Integer> p = new Vector<Integer>();
                     matingSelection(p, n % populationSize_, 2, neiborType, taskId);
 
@@ -225,42 +192,28 @@ public class MOEAD_NTII extends Algorithm {
 
                     updateReference(child, taskId);
                     updateProblem(child, n % populationSize_, neiborType, taskId);
-
-
-
                 }
-                else {
-//                    double sum = 0.0;
-//                    for (int ii = 0; ii < 5; ii++){
-//                        sum += crossIR[doTask][ii];
-//                    }
-//
-//                    double[] selectRn = new double[5];
-//                    selectRn[0] = crossIR[doTask][0] / sum;
-//                    for (int ii = 1; ii < 5; ii++){
-//                        selectRn[ii] = selectRn[ii - 1] + crossIR[doTask][ii] / sum;
-//                    }
-//                    double rm = PseudoRandom.randDouble();
-//                    if (rm <= selectRn[0]) id = 0;
-//                    else if (rm <= selectRn[1]) id = 1;
-//                    else if (rm <= selectRn[2]) id = 2;
-//                    else if (rm <= selectRn[3]) id = 3;
-//                    else  id = 4;
+                else{
+                    id = PseudoRandom.randInt(0, 7);
 
-                    id = PseudoRandom.randInt(0,4);
-
-                    if (id <= 3){
+                    if (id <= 7){
                         HashMap parameters = new HashMap();
                         parameters.put("probability", 0.9);
                         parameters.put("distributionIndex", 20.0);
                         Solution[] parents = new Solution[2];
-//                      隐式迁移
-                        parents[0] = (Solution) selection.execute(population_[taskId]);
-                        parents[1] = (Solution) selection.execute(population_[doTask]);
+                        if (id <= 3){
+                            parents[0] = (Solution) selection.execute(population_[taskId]);
+                            parents[1] = (Solution) selection.execute(population_[doTask]);
+                        }
+                        else{
+                            parents[0] = (Solution) selection.execute(population_[taskId]);
+                            parents[1] = (Solution) selection.execute(population_[taskId]);
+                            id -= 4;
+                        }
                         Solution[] offSpring ;
                         Operator crossover;
                         switch (id){
-//
+//                            0 2 4 6
                             case 0:
                                 crossover = CrossoverFactory.getCrossoverOperator("SpCrossover", parameters);
                                 break;
@@ -276,6 +229,7 @@ public class MOEAD_NTII extends Algorithm {
                             default:
                                 crossover = CrossoverFactory.getCrossoverOperator("SBXCrossover", parameters);
                                 break;
+
                         }
                         offSpring = (Solution[]) crossover.execute(parents, problemSet_, 0);
                         Solution child = offSpring[0] ;
@@ -283,24 +237,23 @@ public class MOEAD_NTII extends Algorithm {
                         problemSet_.get(doTask).evaluate(child);
                         evaluations_++;
                         updateReference(child, doTask);
-                        updateProblem(child, n % populationSize_, neiborType, doTask);
+                        updateProblem2(child, n % populationSize_, neiborType, doTask);
                     }
-                    else{
-                        Vector<Integer> p = new Vector<Integer>();
-                        matingSelection(p, n % populationSize_, 2, neiborType, taskId);
-                        Solution child;
-                        Solution[] parents = new Solution[3];
-                        parents[0] = population_[taskId].get(p.get(0));
-                        parents[1] = population_[taskId].get(p.get(1));
-                        parents[2] = population_[taskId].get(n % populationSize_);
-                        child = (Solution) crossover_.execute(new Object[] { population_[taskId].get(n % populationSize_), parents });
-                        mutation_.execute(child);
-                        problemSet_.get(doTask).evaluate(child);
-                        evaluations_++;
-                        updateReference(child, doTask);
-                        updateProblem(child, n % populationSize_, neiborType, doTask);
-                    }
-
+//                        else{
+//                            Vector<Integer> p = new Vector<Integer>();
+//                            matingSelection(p, n, 2, neiborType, taskId);
+//                            Solution child;
+//                            Solution[] parents = new Solution[3];
+//                            parents[0] = population_[taskId].get(p.get(0));
+//                            parents[1] = population_[taskId].get(p.get(1));
+//                            parents[2] = population_[taskId].get(n);
+//                            child = (Solution) crossover_.execute(new Object[] { population_[taskId].get(n), parents });
+//                            mutation_.execute(child);
+//                            problemSet_.get(doTask).evaluate(child);
+//                            evaluations_++;
+//                            updateReference(child, doTask);
+//                            updateProblem(child, n, neiborType, doTask);
+//                        }
                 }
             }
 
@@ -308,23 +261,12 @@ public class MOEAD_NTII extends Algorithm {
             if (rate != 0 && generation % rate == 0){
                 updateUtility();
             }
-            if (generation % 50 == 0){
-                for (int igd = 0 ; igd < taskNum; igd++){
-//                    QualityIndicator indicator = new QualityIndicator(problemSet_, pf[igd]);
-//                    testIgd[igd][cntIgd] +=  indicator.getIGD2(population_[igd], igd);
-                    initParameter(igd);
-                }
-                cntIgd++;
-            }
+
+
+
         } while ( evaluations_ < maxEvaluations);
 
         return population_;
-    }
-
-    private void initParameter(int taskId) {
-        for (int i = 0; i < crossIR[taskId].length; i++){
-            crossIR[taskId][i] = 1.0;
-        }
     }
 
     private int chooseTack(int taskId) {
@@ -443,10 +385,6 @@ public class MOEAD_NTII extends Algorithm {
             savedValues[taskId].add(new Solution(newSolution));
 
         } // for
-
-
-
-
     }
 
     private void initIdealPoint(int taskId) throws ClassNotFoundException, JMException {
@@ -552,54 +490,7 @@ public class MOEAD_NTII extends Algorithm {
 
     }
 
-    private void updateProblemForCrossover(Solution indiv, int id, int type, int taskId) {
-
-//        initParameter(taskId);
-
-        int size;
-        int time;
-        time = 0;
-
-        if (type == 1) {
-            size = neighborhood_[taskId][id].length;
-        } else {
-            size = populationSize_;
-        }
-        int[] perm = new int[size];
-
-        Utils.randomPermutation(perm, size);
-
-        for (int i = 0; i < size; i++) {
-            int k;
-            if (type == 1) {
-                k = neighborhood_[taskId][id][perm[i]];
-            } else {
-                k = perm[i]; // calculate the values of objective function
-                // regarding the current subproblem
-            }
-            double f1, f2;
-
-//            邻域内随机选择权重向量,我觉得会有重复
-            f1 = fitnessFunction(population_[taskId].get(k), lambda_[taskId][k],taskId);
-            f2 = fitnessFunction(indiv, lambda_[taskId][k],taskId);
-
-
-            if (f2 < f1) {
-                population_[taskId].replace(k, new Solution(indiv));
-                time++;
-                crossIR[taskId][this.id] += (f1 - f2) / f1;
-            }
-            // the maximal number of solutions updated is not allowed to exceed
-            // 'limit'
-            if (time >= nr_) {
-                return;
-            }
-        }
-
-
-    }
-
-    private void updateProblemGlobalIR(Solution indiv, int id, int type, int taskId){
+    private void updateProblem2(Solution indiv, int id, int type, int taskId){
         // indiv: child solution
         // id: the id of current subproblem
         // type: update solutions in - neighborhood (1) or whole population
@@ -641,70 +532,14 @@ public class MOEAD_NTII extends Algorithm {
         }
 
         Iterator iter = map.keySet().iterator();
-        double dIR = 0.0;
         while (iter.hasNext()){
             double ir = (double) iter.next();
             population_[taskId].replace(map.get(ir), new Solution(indiv));
-            dIR += ir;
             time++;
-            if (time >= nr_){
-                crossIR[taskId][this.id] += dIR / 2;
+            if (time >= nr_)
                 return;
-            }
         }
     }
-
-    private void updateProblemRandomIR(Solution indiv, int id, int type, int taskId){
-        // indiv: child solution
-        // id: the id of current subproblem
-        // type: update solutions in - neighborhood (1) or whole population
-        // (otherwise)
-        int size;
-        int time;
-
-        time = 0;
-
-        if (type == 1) {
-            size = neighborhood_[taskId][id].length;
-        } else {
-            size = populationSize_;
-        }
-
-        int[] perm = new int[size];
-        Utils.randomPermutation(perm, size);
-
-        double sumIr = 0.0;
-        for (int i = 0; i < size; i++) {
-            int k;
-            if (type == 1) {
-                k = neighborhood_[taskId][id][perm[i]];
-            } else {
-                k = perm[i]; // calculate the values of objective function
-                // regarding the current subproblem
-            }
-            double f1, f2;
-
-//            邻域内随机选择权重向量,我觉得会有重复
-            f1 = fitnessFunction(population_[taskId].get(k), lambda_[taskId][k],taskId);
-            f2 = fitnessFunction(indiv, lambda_[taskId][k],taskId);
-
-
-            if (f2 < f1) {
-                population_[taskId].replace(k, new Solution(indiv));
-                time++;
-                sumIr += (f1 - f2) / f1;
-            }
-            // the maximal number of solutions updated is not allowed to exceed
-            // 'limit'
-            if (time >= nr_) {
-                crossIR[taskId][this.id] += sumIr / 2;
-                return;
-            }
-        }
-
-    }
-
-
 
     private double fitnessFunction(Solution individual, double[] lambda, int taskId) {
         double fitness;

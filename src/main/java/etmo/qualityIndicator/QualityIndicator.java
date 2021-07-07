@@ -22,7 +22,10 @@
 package etmo.qualityIndicator;
 
 import etmo.core.Problem;
+import etmo.core.ProblemSet;
 import etmo.core.SolutionSet;
+
+import java.util.Properties;
 
 /**
  * QualityIndicator class
@@ -31,7 +34,10 @@ public class QualityIndicator {
 	SolutionSet trueParetoFront_;
 	double trueParetoFrontHypervolume_;
 	Problem problem_;
+	ProblemSet problemSet;
 	public etmo.qualityIndicator.util.MetricsUtil utils_;
+
+	double[][] pfList;
 
 	/**
 	 * Constructor
@@ -48,6 +54,19 @@ public class QualityIndicator {
 		//trueParetoFrontHypervolume_ = new Hypervolume().hypervolume(trueParetoFront_.writeObjectivesToMatrix(),
 				//trueParetoFront_.writeObjectivesToMatrix(), problem_.getNumberOfObjectives());
 	} // Constructor
+
+	public QualityIndicator(ProblemSet problem, String paretoFrontFile) {
+		problemSet = problem;
+		utils_ = new etmo.qualityIndicator.util.MetricsUtil();
+		pfList = utils_.readNonDominatedSolutionSet2(paretoFrontFile);
+
+		//trueParetoFrontHypervolume_ = new Hypervolume().hypervolume(trueParetoFront_.writeObjectivesToMatrix(),
+		//trueParetoFront_.writeObjectivesToMatrix(), problem_.getNumberOfObjectives());
+	} // Constructor
+
+
+
+
 
 	/**
 	 * Returns the hypervolume of solution set
@@ -80,6 +99,14 @@ public class QualityIndicator {
 	public double getIGD(SolutionSet solutionSet) {
 		return new InvertedGenerationalDistance().invertedGenerationalDistance(solutionSet.writeObjectivesToMatrix(),
 				trueParetoFront_.writeObjectivesToMatrix(), problem_.getNumberOfObjectives());
+	} // getIGD`
+
+	public double getIGD2(SolutionSet solutionSet, int taskId) {
+		int start = problemSet.get(taskId).getStartObjPos();
+		int end = problemSet.get(taskId).getEndObjPos();
+
+		return new InvertedGenerationalDistance().invertedGenerationalDistance(solutionSet.writeObjectivesToMatrix2(start, end),
+				pfList, end - start + 1);
 	} // getIGD`
 
 	/**

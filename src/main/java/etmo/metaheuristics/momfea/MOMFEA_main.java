@@ -152,7 +152,7 @@ public class MOMFEA_main {
 			algorithm = new MOMFEA(problemSet);
 
 			algorithm.setInputParameter("populationSize",100*taskNumber);
-			algorithm.setInputParameter("maxEvaluations",100*taskNumber * 1000);
+			algorithm.setInputParameter("maxEvaluations",100*taskNumber * 500);
 			algorithm.setInputParameter("rmp", 0.3);
 
 			parameters = new HashMap();
@@ -183,7 +183,7 @@ public class MOMFEA_main {
 //			System.out.println("RunID\t" + "IGD for "+problemSet.get(0).getName()+" to "+problemSet.get(taskNumber-1).getName());
 //			System.out.println("TaskID\t" + "IGD for " + problemSet.get(0).getName()+" to " +problemSet.get(taskNumber-1).getName());
 
-			int times = 21;
+			int times = 10;
 
 			double ave[] = new double[taskNumber];
 			double cpIGD[][] = new double[taskNumber][times];
@@ -246,7 +246,7 @@ public class MOMFEA_main {
 //				System.out.println("Average IGD for " + problemSet.get(i).getName()+ ": " + form.format(ave[i] / times));
 				System.out.println(form.format(ave[i] / times));
 
-			String path = "MFEA_b_CEC2017.txt";
+			String path = "MFEA_CEC2017.txt";
 			printIGD.printIGDtoText(path, cpIGD, taskNumber, times);
 
 		}

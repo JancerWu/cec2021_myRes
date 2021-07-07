@@ -135,7 +135,7 @@ public class AKT_main {
 				algorithm = new MFEAAKT(problemSet);	
 				
 				algorithm.setInputParameter("populationSize",100*taskNumber);
-				algorithm.setInputParameter("maxEvaluations",100*taskNumber * 1000);
+				algorithm.setInputParameter("maxEvaluations",100*taskNumber * 500);
 				algorithm.setInputParameter("rmp", 0.9);
 		
 				parameters = new HashMap();
@@ -197,7 +197,7 @@ public class AKT_main {
 				
 //				System.out.println("RunID\t" + "IGD for "+problemSet.get(0).getName()+" to "+problemSet.get(taskNumber-1).getName());
 				//System.out.println(crossover1.getName());
-				int times = 21;
+				int times = 10;
 
 				//===========================================================================================										
 				double ave[] = new double[taskNumber];

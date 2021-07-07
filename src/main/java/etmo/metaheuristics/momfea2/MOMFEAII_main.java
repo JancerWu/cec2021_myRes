@@ -34,65 +34,65 @@ public class MOMFEAII_main {
 		
 		HashMap parameters; // Operator parameters
 
-		for (int pCase = 1; pCase <= 10; pCase++ ) {
+		for (int pCase = 1; pCase <= 9; pCase++ ) {
 			switch (pCase) {
-				case 1:
-					problemSet = CPLX1.getProblem();
-					break;
-				case 2:
-					problemSet = CPLX2.getProblem();
-					break;
-				case 3:
-					problemSet = CPLX3.getProblem();
-					break;
-				case 4:
-					problemSet = CPLX4.getProblem();
-					break;
-				case 5:
-					problemSet = CPLX5.getProblem();
-					break;
-				case 6:
-					problemSet = CPLX6.getProblem();
-					break;
-				case 7:
-					problemSet = CPLX7.getProblem();
-					break;
-				case 8:
-					problemSet = CPLX8.getProblem();
-					break;
-				case 9:
-					problemSet = CPLX9.getProblem();
-					break;
-				case 10:
-					problemSet = CPLX10.getProblem();
-					break;
 //				case 1:
-//					problemSet = CIHS.getProblem();
+//					problemSet = CPLX1.getProblem();
 //					break;
 //				case 2:
-//					problemSet = CIMS.getProblem();
+//					problemSet = CPLX2.getProblem();
 //					break;
 //				case 3:
-//					problemSet = CILS.getProblem();
+//					problemSet = CPLX3.getProblem();
 //					break;
 //				case 4:
-//					problemSet = PIHS.getProblem();
+//					problemSet = CPLX4.getProblem();
 //					break;
 //				case 5:
-//					problemSet = PIMS.getProblem();
+//					problemSet = CPLX5.getProblem();
 //					break;
 //				case 6:
-//					problemSet = PILS.getProblem();
+//					problemSet = CPLX6.getProblem();
 //					break;
 //				case 7:
-//					problemSet = NIHS.getProblem();
+//					problemSet = CPLX7.getProblem();
 //					break;
 //				case 8:
-//					problemSet = NIMS.getProblem();
+//					problemSet = CPLX8.getProblem();
 //					break;
 //				case 9:
-//					problemSet = NILS.getProblem();
+//					problemSet = CPLX9.getProblem();
 //					break;
+//				case 10:
+//					problemSet = CPLX10.getProblem();
+//					break;
+				case 1:
+					problemSet = CIHS.getProblem();
+					break;
+				case 2:
+					problemSet = CIMS.getProblem();
+					break;
+				case 3:
+					problemSet = CILS.getProblem();
+					break;
+				case 4:
+					problemSet = PIHS.getProblem();
+					break;
+				case 5:
+					problemSet = PIMS.getProblem();
+					break;
+				case 6:
+					problemSet = PILS.getProblem();
+					break;
+				case 7:
+					problemSet = NIHS.getProblem();
+					break;
+				case 8:
+					problemSet = NIMS.getProblem();
+					break;
+				case 9:
+					problemSet = NILS.getProblem();
+					break;
 
 //				case 1:
 //					problemSet = ETMOF1.getProblem();
@@ -150,13 +150,13 @@ public class MOMFEAII_main {
 //			System.out.println("taskNumber = "+taskNumber);
 			String[] pf = new String[taskNumber];
 			for(int i=0;i<taskNumber;i++) {
-				pf[i] = "PF/cec2019/" + problemSet.get(i).getHType() + ".pf";
+				pf[i] = "PF/cec2017/" + problemSet.get(i).getHType() + ".pf";
 			}
 
 			algorithm = new MOMFEAII(problemSet);
 
 			algorithm.setInputParameter("populationSize",100*taskNumber);
-			algorithm.setInputParameter("maxEvaluations",100*taskNumber * 1000);
+			algorithm.setInputParameter("maxEvaluations",100*taskNumber * 500);
 
 			parameters = new HashMap();
 			parameters.put("probability", 0.9);
@@ -184,7 +184,7 @@ public class MOMFEAII_main {
 
 //			System.out.println("RunID\t" + "IGD for "+problemSet.get(0).getName()+" to "+problemSet.get(taskNumber-1).getName());
 
-			int times = 21;
+			int times = 10;
 
 			double ave[] = new double[taskNumber];
 			double cpIGD[][] = new double[taskNumber][times];
@@ -233,7 +233,7 @@ public class MOMFEAII_main {
 //				System.out.println("Average IGD for " + problemSet.get(i).getName()+ ": " + form.format(ave[i] / times));
 				System.out.println(form.format(ave[i] / times));
 
-			String path = "MOMFEAII_CEC2021.txt";
+			String path = "MOMFEAII_CEC2017.txt";
 			printIGD.printIGDtoText(path, cpIGD, taskNumber, times);
 		}
 

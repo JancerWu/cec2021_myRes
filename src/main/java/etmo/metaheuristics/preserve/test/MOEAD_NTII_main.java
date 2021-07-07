@@ -1,4 +1,4 @@
-package etmo.metaheuristics.moead;
+package etmo.metaheuristics.preserve.test;
 
 import etmo.core.*;
 import etmo.metaheuristics.utils.printIGD;
@@ -28,20 +28,18 @@ public class MOEAD_NTII_main {
         HashMap parameters; // Operator parameters
 
         double[] CR = new double[15];
-        for (int i = 0; i <= 10; i++){
+        for (int i = 1; i <= 10; i++){
             CR[i] = (double)i / 10.0;
         }
         int[] id = new int[10];
-        for (int i = 0; i <= 8; i++){
+        for (int i = 0; i <= 7; i++){
             id[i] = i;
         }
 
-        for (int crI = 3; crI <= 3; crI++){
-            for (int idN = 4; idN <= 4; idN++){
-//                System.out.println("rmp = " + CR[crI] + " id = " + id[idN]);
-                System.out.println("rmp = " + CR[crI] );
-
-                for (int pCase = 1; pCase <= 1; pCase++ ){
+        for (int crI = 1; crI <= 3; crI++){
+            for (int idN = 0; idN <= 0; idN++){
+                System.out.println("rmp = " + CR[crI]);
+                for (int pCase = 1; pCase <= 9; pCase++ ){
                     switch (pCase){
 //                case 1:
 //                    problemSet = CPLX1.getProblem();
@@ -75,7 +73,7 @@ public class MOEAD_NTII_main {
 //                    break;
 
                         case 1:
-                            problemSet = New4.getProblem();
+                            problemSet = CIHS.getProblem();
                             break;
                         case 2:
                             problemSet = CIMS.getProblem();
@@ -200,7 +198,7 @@ public class MOEAD_NTII_main {
                     algorithm.setInputParameter("delta", 0.3);
                     algorithm.setInputParameter("nr", 2);
                     algorithm.setInputParameter("rmp", CR[crI]);
-                    algorithm.setInputParameter("id", id[idN]);
+                    algorithm.setInputParameter("id", 0);
 
 
 
@@ -231,11 +229,11 @@ public class MOEAD_NTII_main {
                     DecimalFormat form = new DecimalFormat("#.####E0");
 
 
-                    int times = 50;
+                    int times = 10;
                     double ave[] = new double[taskNumber];
                     double cpIGD[][] = new double[taskNumber][times];
 
-                    double testIgd[][] = new double[taskNumber][50];
+                    double testIgd[][] = new double[taskNumber][500];
                     for (int i = 0 ; i < taskNumber; i++){
                         Arrays.fill(testIgd[i], 0.0);
                     }
@@ -273,20 +271,24 @@ public class MOEAD_NTII_main {
                     }
 
                     for(int i=0;i<taskNumber;i++){
-                        for (int j = 0; j < 50; j++){
+                        for (int j = 0; j < 500; j++){
                             testIgd[i][j] /= times;
                         }
 //				System.out.println("Average IGD for " + problemSet.get(i).getName()+ ": " + form.format(ave[i] / times));
                         System.out.println(form.format(ave[i] / times));
                     }
+
+
+
+
+
+
 //
-////                    String path = "origin id = " + id[idN] + " rmp = " + CR[crI] +  ".txt";
-//                    String path =  "origin random mix rmp = " + CR[crI] +  ".txt";
-//                    printIGD.printIGDtoText(path, cpIGD, taskNumber, times);
-//
-//                    String pathIgd =  "origin random mix for random mix rmp = " + CR[crI] +  ".txt";
-////                    String pathIgd = "origin igd for id = " + id[idN] +  " rmp = " + CR[crI] +  ".txt";
-//                    printIGD.printIGDtoText(pathIgd, testIgd, taskNumber, 50);
+                    String path = "mix 4_4 " + CR[crI] +  ".txt";
+                    printIGD.printIGDtoText(path, cpIGD, taskNumber, times);
+
+                    String pathIgd = "igd for mix 4_4 " + CR[crI] +  ".txt";
+                    printIGD.printIGDtoText(pathIgd, testIgd, taskNumber, 500);
 
 
 

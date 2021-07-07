@@ -1,4 +1,4 @@
-package etmo.metaheuristics.moead;
+package etmo.metaheuristics.preserve.mixDRA_AB_TIR;
 
 import etmo.core.*;
 import etmo.metaheuristics.utils.printIGD;
@@ -13,7 +13,6 @@ import etmo.util.comparators.LocationComparator;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class MOEAD_NTII_main {
@@ -32,16 +31,14 @@ public class MOEAD_NTII_main {
             CR[i] = (double)i / 10.0;
         }
         int[] id = new int[10];
-        for (int i = 0; i <= 8; i++){
+        for (int i = 0; i <= 7; i++){
             id[i] = i;
         }
 
-        for (int crI = 3; crI <= 3; crI++){
-            for (int idN = 4; idN <= 4; idN++){
-//                System.out.println("rmp = " + CR[crI] + " id = " + id[idN]);
-                System.out.println("rmp = " + CR[crI] );
-
-                for (int pCase = 1; pCase <= 1; pCase++ ){
+        for (int crI = 1; crI <= 3; crI++){
+            for (int idN = 0; idN <= 0; idN++){
+                System.out.println("rmp = " + CR[crI]);
+                for (int pCase = 1; pCase <= 9; pCase++ ){
                     switch (pCase){
 //                case 1:
 //                    problemSet = CPLX1.getProblem();
@@ -75,7 +72,7 @@ public class MOEAD_NTII_main {
 //                    break;
 
                         case 1:
-                            problemSet = New4.getProblem();
+                            problemSet = CIHS.getProblem();
                             break;
                         case 2:
                             problemSet = CIMS.getProblem();
@@ -191,7 +188,7 @@ public class MOEAD_NTII_main {
                     algorithm = new MOEAD_NTII(problemSet);
 
                     algorithm.setInputParameter("populationSize", 100);
-                    algorithm.setInputParameter("maxEvaluations", 100 * taskNumber * 500);
+                    algorithm.setInputParameter("maxEvaluations", 100 * taskNumber * 1000);
 
                     algorithm.setInputParameter("dataDirectory", "resources/weightVectorFiles/moead");
 
@@ -200,7 +197,7 @@ public class MOEAD_NTII_main {
                     algorithm.setInputParameter("delta", 0.3);
                     algorithm.setInputParameter("nr", 2);
                     algorithm.setInputParameter("rmp", CR[crI]);
-                    algorithm.setInputParameter("id", id[idN]);
+                    algorithm.setInputParameter("id", 0);
 
 
 
@@ -231,17 +228,13 @@ public class MOEAD_NTII_main {
                     DecimalFormat form = new DecimalFormat("#.####E0");
 
 
-                    int times = 50;
+                    int times = 10;
                     double ave[] = new double[taskNumber];
                     double cpIGD[][] = new double[taskNumber][times];
 
-                    double testIgd[][] = new double[taskNumber][50];
-                    for (int i = 0 ; i < taskNumber; i++){
-                        Arrays.fill(testIgd[i], 0.0);
-                    }
-
                     for (int t = 1; t <= times; t++){
-                        SolutionSet[] resPopulation = ((MOEAD_NTII) algorithm).execute2(testIgd);
+                        SolutionSet[] resPopulation = ((MOEAD_NTII) algorithm).execute2();
+
 
                         SolutionSet[] res = new SolutionSet[taskNumber];
                         for (int i = 0; i < taskNumber; i++){
@@ -262,7 +255,7 @@ public class MOEAD_NTII_main {
 //				System.out.print(t + "\t");
                         for(int i = 0; i < taskNumber; i++){
                             QualityIndicator indicator = new QualityIndicator(problemSet.get(i), pf[i]);
-                            if(res[i].size() == 0)
+                            if(res[i].size()==0)
                                 continue;
                             igd =  indicator.getIGD(res[i]);
 //					System.out.print(form.format(igd) + "\t" );
@@ -272,22 +265,56 @@ public class MOEAD_NTII_main {
 
                     }
 
-                    for(int i=0;i<taskNumber;i++){
-                        for (int j = 0; j < 50; j++){
-                            testIgd[i][j] /= times;
-                        }
+                    for(int i=0;i<taskNumber;i++)
 //				System.out.println("Average IGD for " + problemSet.get(i).getName()+ ": " + form.format(ave[i] / times));
                         System.out.println(form.format(ave[i] / times));
-                    }
-//
-////                    String path = "origin id = " + id[idN] + " rmp = " + CR[crI] +  ".txt";
-//                    String path =  "origin random mix rmp = " + CR[crI] +  ".txt";
-//                    printIGD.printIGDtoText(path, cpIGD, taskNumber, times);
-//
-//                    String pathIgd =  "origin random mix for random mix rmp = " + CR[crI] +  ".txt";
-////                    String pathIgd = "origin igd for id = " + id[idN] +  " rmp = " + CR[crI] +  ".txt";
-//                    printIGD.printIGDtoText(pathIgd, testIgd, taskNumber, 50);
 
+
+
+//
+                    String path = "new mix ab rmp=" + CR[crI] +  ".txt";
+                    printIGD.printIGDtoText(path, cpIGD, taskNumber, times);
+
+
+//            String path = "";
+//            try {
+//                FileOutputStream fos = new FileOutputStream(path);
+//                OutputStreamWriter osw = new OutputStreamWriter(fos);
+//                BufferedWriter bw = new BufferedWriter(osw);
+//
+//                if (ave > 0) {
+//                    int numberOfVariables = solutionsList_.get(0).getDecisionVariables().length;
+//                    for (Solution aSolutionsList_ : solutionsList_) {
+//                        for (int j = 0; j < numberOfVariables; j++)
+//                            bw.write(aSolutionsList_.getDecisionVariables()[j].toString() + " ");
+//                        bw.newLine();
+//                    }
+//                }
+//                bw.close();
+//            } catch (IOException e) {
+//                Configuration.logger_.severe("Error acceding to the file");
+//                e.printStackTrace();
+//            }
+
+//            QualityIndicator indicator = new QualityIndicator(problemSet.get(0), pf[0]);
+//            int times = 21;
+//            double aveIGD = 0;
+//            for (int i = 1; i <= times; i++) {
+//                SolutionSet population = algorithm.execute();
+////                    chart.saveChart("moead", BitmapEncoder.BitmapFormat.PNG);
+////                    population.printObjectivesToFile("MOEAD_"+problemSet2.get(0).getNumberOfObjectives()+"Obj_"+
+////                        problemSet2.get(0).getName()+ "_" + problemSet2.get(0).getNumberOfVariables() + "D_run"+i+".txt");
+//                double igd = indicator.getIGD(population);
+//                aveIGD += igd;
+////                    System.out.println(i + "\t" + form.format(igd));
+////                    System.out.println(i + "\t" + form.format(igd));
+////                    resources/weightVectorFiles/moead/W3D_100.dat
+//
+//
+//            }
+////                System.out.println("Average IGD for " + problemSet2.get(0).getName() + ": " + form.format(aveIGD / times));
+//            System.out.println(form.format(aveIGD / times));
+//            //                System.out.println();
 
 
                 }
